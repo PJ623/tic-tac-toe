@@ -12,6 +12,7 @@
     box-sizing: border-box;
 }
 
+/* Adjust width according to amount of players */
 .tile {
     background-color: pink;
     margin: 2px;
