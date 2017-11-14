@@ -1,30 +1,32 @@
-function Board(size){
-    //this.size = size;
+function Game(boardSize, numberOfPlayers){
+    let board = [];
+    let players = [];
+    let turnCount = 0;  // Used to determine whose current turn it is.
+
     let container = document.createElement('DIV');
     container.className = 'container';
 
-    let arr = [];
-    //this.arr = arr;
-    // Build the board
-    for(let i = 0; i < size; i++){
-        arr.push([]);
-        for(let j = 0; j < size; j++)
-            arr[i].push(0);
+    // Load players.
+    for(let i = 1; i <= numberOfPlayers; i++)
+        players.push(i);
+
+    // Create the board data structure.
+    for(let i = 0; i < boardSize; i++){
+        board.push([]);
+        for(let j = 0; j < boardSize; j++)
+            board[i].push(0);
     }
 
-    //this.arr = arr;
-
-    // Build it onto page
+    // Render the board onto the page.
     let render = function render(){
-        for(let i = 0; i < arr.length; i++){
+        for(let i = 0; i < board.length; i++){
             let row = document.createElement('DIV');
             row.className = 'row';
-            for(let j = 0; j < arr[i].length; j++){
+            for(let j = 0; j < board[i].length; j++){
                 let tile = document.createElement('DIV');
                 tile.className = 'tile ' + i.toString() + 'x' + j.toString() + 'y';
-                tile.textContent = /*arr[i][j]*/i.toString() +','+ j.toString();
+                tile.textContent = 0;
                 tile.addEventListener('click', update, false);
-                //tile.onclick = console.log('clicked coordinate: ');
                 row.appendChild(tile);
             }
             container.appendChild(row);
@@ -32,30 +34,24 @@ function Board(size){
         document.body.appendChild(container);
     }
 
-    // update after player makes a move
+    // Updates the board after every turn.
     let update = function update(){
-        this.textContent = 'X'; // map to player instead
-        let x = this.className.toString().match(/\d(?=x)/)[0];
-        let y = this.className.toString().match(/\d(?=y)/)[0];
-        arr[x][y] = this.textContent;
-        console.log(x + ',' + y);
-        printBoard();
+        if(this.textContent == 0){
+            turnCount++;
+            this.textContent = turnCount;
+            let x = this.className.toString().match(/\d(?=x)/)[0];
+            let y = this.className.toString().match(/\d(?=y)/)[0];
+            board[x][y] = turnCount;
+    
+            if(turnCount >= players.length){
+                turnCount = players[0]-1;
+            }
+            console.log(board);
+        }
+        
+        // TODO: Check for win after every turn.
     }
-
-    printBoard = function(){
-        console.log(arr);
-        //return arr;
-    }
-
-    this.getSize = function(){
-        return size;
-    }
-
     render();
 }
 
-let ticTacToe = new Board(3);
-console.log(ticTacToe.getSize());
-//console.log(ticTacToe.print());
-//console.log(ticTacToe.render());
-//console.log(ticTacToe);
+let ticTacToe = new Game(3, 2);
