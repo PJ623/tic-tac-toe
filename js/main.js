@@ -27,8 +27,10 @@ function Game(boardSize, numberOfPlayers) {
             row.className = 'row';
             for (let j = 0; j < board[i].length; j++) {
                 let tile = document.createElement('DIV');
-                tile.className = 'tile ' + i.toString() + 'x' + j.toString() + 'y'; // TODO: Use data attribute to store coordinate values.
-                tile.textContent = 0;
+                tile.className = 'tile';
+                tile.innerHTML = '<div>0</div>';
+                tile.setAttribute('data-x', i);
+                tile.setAttribute('data-y', j);
                 tile.addEventListener('click', update, false);
                 grid.appendChild(tile);
             }
@@ -44,9 +46,9 @@ function Game(boardSize, numberOfPlayers) {
     let update = function update() {
         if (this.textContent == 0) {
             turnCount++;
-            this.textContent = turnCount;
-            let x = this.className.toString().match(/\d(?=x)/)[0];
-            let y = this.className.toString().match(/\d(?=y)/)[0];
+            this.innerHTML = '<div>' + turnCount + '</div>'; // TODO: Turn into an image instead.
+            let x = this.dataset.x;
+            let y = this.dataset.y;
             board[x][y] = turnCount;
 
             // Check if someone has won the game.
@@ -60,6 +62,7 @@ function Game(boardSize, numberOfPlayers) {
             if (turnCount >= players.length)
                 turnCount = players[0] - 1;
         }
+        console.log(board);
     }
 
     // Check if someone has won the game.
@@ -124,5 +127,4 @@ function Game(boardSize, numberOfPlayers) {
     render();
 }
 
-let ticTacToe = new Game(9, 2);
-//let ticTacToe2 = new Game(4, 2);
+let ticTacToe = new Game(3, 2);

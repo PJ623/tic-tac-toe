@@ -2,8 +2,8 @@
     width: 100%;
     height: 100%;
     background-color: black;
-    text-align: center;
-    font-size: 2em;
+    
+    font-size: 3em;
     display: grid;
     grid-gap: 1px;
 }
@@ -15,5 +15,7 @@
 
 .tile {
     background-color: pink;
-    vertical-align: middle; /* Not really working as intended */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
