@@ -4,9 +4,11 @@ function Game(boardSize, numberOfPlayers) {
     let players = [];
     let turnCount = 0;  // Used to determine whose current turn it is.
 
-    let container = document.createElement('DIV');
-    container.className = 'container';
-
+    let grid = document.createElement('DIV');
+    grid.className = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(' + boardSize + ', 1fr)';
+    document.getElementById('container').appendChild(grid);
+ 
     // Load players.
     for (let i = 1; i <= numberOfPlayers; i++)
         players.push(i);
@@ -28,14 +30,17 @@ function Game(boardSize, numberOfPlayers) {
                 tile.className = 'tile ' + i.toString() + 'x' + j.toString() + 'y'; // TODO: Use data attribute to store coordinate values.
                 tile.textContent = 0;
                 tile.addEventListener('click', update, false);
-                row.appendChild(tile);
+                grid.appendChild(tile);
             }
-            container.appendChild(row);
         }
-        document.body.appendChild(container);
-    }
 
-    // Updates the board after every turn.
+        // Size the tiles evenly.
+        let tiles = document.getElementsByClassName('tile');
+        for(let i = 0; i < tiles.length; i++)
+            tiles[i].style.height = tiles[0].offsetWidth + 'px';
+    }
+    
+    // Update the board after every turn.
     let update = function update() {
         if (this.textContent == 0) {
             turnCount++;
@@ -45,7 +50,7 @@ function Game(boardSize, numberOfPlayers) {
             board[x][y] = turnCount;
 
             // Check if someone has won the game.
-            if (isSolved() > 0) {
+            if (checkWin() > 0) {
                 let winMessage = document.createElement('P');
                 winMessage.textContent = 'Player ' + turnCount + ' wins!';
                 document.body.appendChild(winMessage);
@@ -60,10 +65,9 @@ function Game(boardSize, numberOfPlayers) {
     // Check if someone has won the game.
     // Lifted from my CodeWars solution:
     // https://www.codewars.com/kata/reviews/525caa5c1bf619d28c000338/groups/5a0a993405414a048f00007b
-    let isSolved = function () {
+    let checkWin = function () {
 
         let unfinished = false;
-        //let players = [1, 2];
         let largest = -1;
 
         function checkPlayerWin(player) {
@@ -120,4 +124,5 @@ function Game(boardSize, numberOfPlayers) {
     render();
 }
 
-let ticTacToe = new Game(3, 2);
+let ticTacToe = new Game(9, 2);
+//let ticTacToe2 = new Game(4, 2);
