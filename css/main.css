@@ -2,10 +2,9 @@
     width: 100%;
     height: 100%;
     background-color: black;
-    
     font-size: 3em;
     display: grid;
-    grid-gap: 1px;
+    grid-gap: 3px;
 }
 
 #container {
@@ -13,9 +12,19 @@
     margin: auto;
 }
 
+#container > p {
+    text-align: center;
+    font-size: 2em;
+}
+
 .tile {
-    background-color: pink;
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.tile > img {
+    max-width: 100%;
+    max-height: 100%;
 }

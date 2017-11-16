@@ -1,17 +1,12 @@
-function Game(boardSize, numberOfPlayers) {
+function Game(boardSize, players) {
 
     let board = [];
-    let players = [];
     let turnCount = 0;  // Used to determine whose current turn it is.
 
     let grid = document.createElement('DIV');
     grid.className = 'grid';
     grid.style.gridTemplateColumns = 'repeat(' + boardSize + ', 1fr)';
     document.getElementById('container').appendChild(grid);
- 
-    // Load players.
-    for (let i = 1; i <= numberOfPlayers; i++)
-        players.push(i);
 
     // Create the board data structure.
     for (let i = 0; i < boardSize; i++) {
@@ -28,7 +23,7 @@ function Game(boardSize, numberOfPlayers) {
             for (let j = 0; j < board[i].length; j++) {
                 let tile = document.createElement('DIV');
                 tile.className = 'tile';
-                tile.innerHTML = '<div>0</div>';
+                tile.innerHTML = '<div></div>';
                 tile.setAttribute('data-x', i);
                 tile.setAttribute('data-y', j);
                 tile.addEventListener('click', update, false);
@@ -38,57 +33,56 @@ function Game(boardSize, numberOfPlayers) {
 
         // Size the tiles evenly.
         let tiles = document.getElementsByClassName('tile');
-        for(let i = 0; i < tiles.length; i++)
+        for (let i = 0; i < tiles.length; i++)
             tiles[i].style.height = tiles[0].offsetWidth + 'px';
     }
-    
+
     // Update the board after every turn.
     let update = function update() {
-        if (this.textContent == 0) {
-            turnCount++;
-            this.innerHTML = '<div>' + turnCount + '</div>'; // TODO: Turn into an image instead.
+        if (this.innerHTML == '<div></div>') {
+            this.innerHTML = "<img src=" + players[turnCount].symbol + ">";
             let x = this.dataset.x;
             let y = this.dataset.y;
-            board[x][y] = turnCount;
+            board[x][y] = players[turnCount].name;
 
-            // Check if someone has won the game.
-            if (checkWin() > 0) {
+            if (checkWin() > -1) {
                 let winMessage = document.createElement('P');
-                winMessage.textContent = 'Player ' + turnCount + ' wins!';
-                document.body.appendChild(winMessage);
+                winMessage.textContent = 'Player ' + players[turnCount].name + ' wins!';
+                document.getElementById('container').appendChild(winMessage);
                 // TODO: Reset game
+            } else if (checkWin() == -2) {
+                let drawMessage = document.createElement('P');
+                drawMessage.textContent = 'No contest.';
+                document.getElementById('container').appendChild(drawMessage);
             }
-
+            turnCount++;
             if (turnCount >= players.length)
-                turnCount = players[0] - 1;
+                turnCount = 0;
         }
-        console.log(board);
     }
 
     // Check if someone has won the game.
     // Lifted from my CodeWars solution:
     // https://www.codewars.com/kata/reviews/525caa5c1bf619d28c000338/groups/5a0a993405414a048f00007b
     let checkWin = function () {
-
         let unfinished = false;
         let largest = -1;
 
-        function checkPlayerWin(player) {
-
+        function checkPlayerWin(player, turnCount) {
             let diagLtoR = 0;
             let diagRtoL = 0;
             let sameRow = 0;
             let sameCol = 0;
 
             for (let k = 0; k < board.length; k++) {
-                if (board[k][k] == player)
+                if (board[k][k] == player) 
                     diagLtoR++;
                 if (board[k][(board.length - 1) - k] == player)
                     diagRtoL++;
             }
 
             if (diagLtoR == board.length || diagRtoL == board.length)
-                return player;
+                return turnCount;
 
             for (let i = 0; i < board.length; i++) {
                 sameRow = 0;
@@ -97,27 +91,27 @@ function Game(boardSize, numberOfPlayers) {
                 for (let j = 0; j < board[i].length; j++) {
                     if (board[i][j] == player)
                         sameRow++;
-                    else if (board[i][j] == 0)
+                    else if (board[i][j] == '')
                         unfinished = true;
                     if (board[j][i] == player)
                         sameCol++;
                 }
 
                 if (sameRow == board.length || sameCol == board[i].length)
-                    return player;
+                    return turnCount;
             }
             return -1;
         }
 
-        for (let i = players[0]; i <= players.length; i++) {
-            if (checkPlayerWin(i) > largest)
-                largest = checkPlayerWin(i);
+        for (let i = 0; i < players.length; i++) {
+            if (checkPlayerWin(players[i].name, i) > largest)
+                largest = checkPlayerWin(players[i].name, i);
         }
 
         if (largest == -1) {
             if (unfinished == true)
                 return -1;
-            return 0;
+            return -2;
         }
 
         return largest;
@@ -127,4 +121,7 @@ function Game(boardSize, numberOfPlayers) {
     render();
 }
 
-let ticTacToe = new Game(3, 2);
+let players = [{ name: 'Kotori', symbol: 'assets/images/kotori.png' },
+{ name: 'Nico', symbol: 'assets/images/nico.png' }];
+
+let ticTacToe = new Game(3, players);
