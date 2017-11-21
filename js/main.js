@@ -6,8 +6,9 @@ function Game(boardSize, players) {
     let grid = document.createElement('DIV');
     grid.className = 'grid';
     grid.style.gridTemplateColumns = 'repeat(' + boardSize + ', 1fr)';
-    document.getElementById('container').appendChild(grid);
-
+    let container = document.getElementById('container');
+    container.appendChild(grid)
+    
     // Create the board data structure.
     for (let i = 0; i < boardSize; i++) {
         board.push([]);
@@ -18,8 +19,6 @@ function Game(boardSize, players) {
     // Render the board onto the page.
     let render = function render() {
         for (let i = 0; i < board.length; i++) {
-            let row = document.createElement('DIV');
-            row.className = 'row';
             for (let j = 0; j < board[i].length; j++) {
                 let tile = document.createElement('DIV');
                 tile.className = 'tile';
@@ -33,6 +32,7 @@ function Game(boardSize, players) {
 
         // Size the tiles evenly.
         let tiles = document.getElementsByClassName('tile');
+
         for (let i = 0; i < tiles.length; i++)
             tiles[i].style.height = tiles[0].offsetWidth + 'px';
     }
@@ -48,17 +48,23 @@ function Game(boardSize, players) {
             if (checkWin() > -1) {
                 let winMessage = document.createElement('P');
                 winMessage.textContent = 'Player ' + players[turnCount].name + ' wins!';
-                document.getElementById('container').appendChild(winMessage);
-                // TODO: Reset game
+                container.appendChild(winMessage);
+                reset();
             } else if (checkWin() == -2) {
                 let drawMessage = document.createElement('P');
                 drawMessage.textContent = 'No contest.';
-                document.getElementById('container').appendChild(drawMessage);
+                container.appendChild(drawMessage);
+                reset();
             }
             turnCount++;
+
             if (turnCount >= players.length)
                 turnCount = 0;
         }
+    }
+
+    let reset = function reset() {
+        let nextGame = new Game(boardSize, players);
     }
 
     // Check if someone has won the game.
@@ -75,7 +81,7 @@ function Game(boardSize, players) {
             let sameCol = 0;
 
             for (let k = 0; k < board.length; k++) {
-                if (board[k][k] == player) 
+                if (board[k][k] == player)
                     diagLtoR++;
                 if (board[k][(board.length - 1) - k] == player)
                     diagRtoL++;
