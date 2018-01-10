@@ -40,23 +40,21 @@ function Game(boardSize, players) {
 
     // Update the board after every turn.
     let update = function update() {
-        if (this.innerHTML == '<div></div>') {
+        if (this.innerHTML == '<div></div>' && !isFinished) {
             this.innerHTML = "<img src=" + players[turnCount].symbol + ">";
             let x = this.dataset.x;
             let y = this.dataset.y;
             board[x][y] = players[turnCount].name;
 
-            if (checkWin() > -1 && !isFinished) {
+            if (checkWin() > -1) {
                 let winMessage = document.createElement('P');
                 winMessage.textContent = 'Player ' + players[turnCount].name + ' wins!';
                 container.appendChild(winMessage);
-                isFinished = true;
                 newGame();
-            } else if (checkWin() == -2 && !isFinished) {
+            } else if (checkWin() == -2) {
                 let drawMessage = document.createElement('P');
                 drawMessage.textContent = 'No contest.';
                 container.appendChild(drawMessage);
-                isFinished = true;
                 newGame();
             }
             turnCount++;
@@ -67,6 +65,7 @@ function Game(boardSize, players) {
     }
 
     let newGame = function newGame() {
+        isFinished = true;
         let nextGame = new Game(boardSize, players);
     }
 
