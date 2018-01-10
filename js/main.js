@@ -2,13 +2,14 @@ function Game(boardSize, players) {
 
     let board = [];
     let turnCount = 0;  // Used to determine whose current turn it is.
+    let isFinished = false;
 
     let grid = document.createElement('DIV');
     grid.className = 'grid';
     grid.style.gridTemplateColumns = 'repeat(' + boardSize + ', 1fr)';
     let container = document.getElementById('container');
     container.appendChild(grid)
-    
+
     // Create the board data structure.
     for (let i = 0; i < boardSize; i++) {
         board.push([]);
@@ -45,16 +46,18 @@ function Game(boardSize, players) {
             let y = this.dataset.y;
             board[x][y] = players[turnCount].name;
 
-            if (checkWin() > -1) {
+            if (checkWin() > -1 && !isFinished) {
                 let winMessage = document.createElement('P');
                 winMessage.textContent = 'Player ' + players[turnCount].name + ' wins!';
                 container.appendChild(winMessage);
-                reset();
-            } else if (checkWin() == -2) {
+                isFinished = true;
+                newGame();
+            } else if (checkWin() == -2 && !isFinished) {
                 let drawMessage = document.createElement('P');
                 drawMessage.textContent = 'No contest.';
                 container.appendChild(drawMessage);
-                reset();
+                isFinished = true;
+                newGame();
             }
             turnCount++;
 
@@ -63,7 +66,7 @@ function Game(boardSize, players) {
         }
     }
 
-    let reset = function reset() {
+    let newGame = function newGame() {
         let nextGame = new Game(boardSize, players);
     }
 
